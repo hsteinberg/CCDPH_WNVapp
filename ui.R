@@ -22,7 +22,7 @@ ui <- fluidPage(
                                                 '))
            ),
   #Starting nav bar
-  navbarPage("Menu", id = "menu", windowTitle = "Cook County West Nile Virus Surveillance",
+  navbarPage("Menu", id = "menu", windowTitle = "Cook County West Nile virus Surveillance",
     tabPanel("Home",
              #Building Vertical strip of images on home page
              fluidRow(
@@ -44,7 +44,7 @@ ui <- fluidPage(
 #########################################################################################################################################
                
                column(7, 
-                    p(id = "lowrisk", "As of ",strong(paste("Week", week))," the risk of human West Nile Virus in Suburban Cook
+                    p(id = "lowrisk", "As of ",strong(paste("Week", week))," the risk of human West Nile virus in Suburban Cook
                            County is ", strong("HIGH.")),
                      h4(strong("What is West Nile virus?"), style = "padding-bottom: 3px; padding-top: 15px"),
                      p("West Nile virus (WNV) is a serious disease most commonly spread by infected mosquitoes. Mosquitoes become infected when 
@@ -56,7 +56,7 @@ ui <- fluidPage(
                        a(href = "https://www.cdc.gov/westnile", "https://www.cdc.gov/westnile"), ".", align = "justify", style = "padding-bottom: 10px"),
                      h4(strong("Why do surveillance for West Nile virus?"), style = "padding-bottom: 3px; padding-top: 5px"),
                      p("Most people get infected with West Nile virus after being bitten by an infected mosquito. However, sometimes symptoms don't 
-                       begin until two weeks after the bite. West Nile Virus activity in mosquitoes and birds can provide an earlier signal of 
+                       begin until two weeks after the bite. West Nile virus activity in mosquitoes and birds can provide an earlier signal of 
                        increased risk in the community. Research shows mosquito surveillance can warn health departments an outbreak is coming 
                        several weeks before a human case is reported. Simple activities like reducing the mosquito population or preventing mosquito 
                        bites can reduce the risk of infection. ", align = "justify", style = "padding-bottom: 10px"),
@@ -67,7 +67,7 @@ ui <- fluidPage(
                        a(href = "https://www.nwmadil.com/", "the Northwest MAD"), ", ", 
                        a(href = "https://www.desplainesvalleymad.com/", "the Desplaines Valley MAD"), ", and ", 
                        a(href = "https://www.sccmad.org/", "the South Cook County MAD"), "  - and the Cook County Department of Public Health and the Illinois 
-                       Department of Public Health, trap and test mosquitos for West Nile Virus. The Cook County Department of Public Health also tests dead birds 
+                       Department of Public Health, trap and test mosquitos for West Nile virus. The Cook County Department of Public Health also tests dead birds 
                        for West Nile virus and conducts disease surveillance in humans. Surveillance data is compiled into a ",
                        a(href = "http://cookcountypublichealth.org/data-reports/communicable-diseases", "weekly report"), " and shared with our partners in 
                        mosquito control, the healthcare community, and the public. This application is a companion to our weekly report. Comments or questions 
@@ -100,7 +100,7 @@ ui <- fluidPage(
                     Abatement District, South Cook County Mosquito Abatement District, and the Illinois Department of Public Health.
                     Increased West Nile virus activity in mosquitoes is often observed several weeks before human cases are reported.",
                     align = "justify", style = "padding-bottom: 10px"),
-                  p("When mosquitoes are tested for West Nile Virus, they are tested in groups, or 'pools', of up to 50 mosquitoes. 
+                  p("When mosquitoes are tested for West Nile virus, they are tested in groups, or 'pools', of up to 50 mosquitoes. 
                     Therefore when a mosquito pool tests positive, the number of WNV positive mosquitoes in that pool is unknown. 
                     It is only known that at least one mosquito in the pool was positive.", 
                     align = "justify", style = "padding-bottom: 10px")),
@@ -115,8 +115,10 @@ ui <- fluidPage(
       sidebarLayout(
         sidebarPanel(width = 3,
           checkboxGroupInput("mosq_plot_year", "Display Mosquito Data by Season for Suburban Cook County",
-                             sort(unique(perc_pos_by_week$Year)),
-                             selected = c("2018", "2019")
+                             choiceValues = c(2012, (year-4):year),
+                             selected = c("2012", "2018", "2019"),
+                             choiceNames = c("2012 (Last Outbreak Year)",
+                                             (year-4):year)
                              )
         ),
         mainPanel(width = 9,
@@ -135,17 +137,18 @@ ui <- fluidPage(
                       p("An important measure of West Nile virus activity in mosquitoes is the minimum infection rate.
                         The minimum infection rate (MIR) is calculated by dividing the number of positive mosquito pools 
                         by the total number of mosquitoes tested and multiplying by 1000. It is the most conservative estimate 
-                        of West Nile Virus activity in mosquitoes and can be a good indicator of human risk in the coming weeks. 
-                        Seasons where MIR is higher than 15 infected mosquitoes per 1000 are associated with increased numbers 
-                        of human cases.", 
+                        of West Nile virus activity in mosquitoes and can be a good indicator of human risk in the coming weeks. 
+                        ", 
                         align = "justify", style = "padding-bottom: 10px"))
                ),
              hr(),
              sidebarLayout(
                sidebarPanel(width = 3,
                             checkboxGroupInput("mir_years", "Display MIR Data by Season for Suburban Cook County",
-                                               sort(unique(mir_by_year$MMWRyear)),
-                                               selected = c("2018", "2019")
+                                               choiceValues = c(2012, (year-4):year),
+                                               selected = c("2012", "2018", "2019"),
+                                               choiceNames = c("2012 (Last Outbreak Year)",
+                                                               (year-4):year)
                             )
                ),
                mainPanel(width = 9,
@@ -164,9 +167,11 @@ ui <- fluidPage(
              hr(), br(),
              fluidRow(
                column(3, h4(("MIR is Correlated with WNV Cases")),
-                      p("Mosquito minimum infection rate (MIR) can be an accurate predictor of human risk 
-                        for West Nile Virus. In past seasons since 2005, high infection rates in mosquitos 
-                        have been correlated with more human West Nile Virus cases in Suburban Cook County.", 
+                      p("Mosquito minimum infection rate (MIR) can be an good predictor of human risk 
+                        for West Nile virus. In past seasons since 2005, high infection rates in mosquitos 
+                        have been correlated with more human West Nile virus cases in Suburban Cook County.
+                        Seasons where MIR is higher than 15 infected mosquitoes per 1000 are associated with increased numbers 
+                        of human cases.", 
                         align = "justify", style = "padding-bottom: 10px")
                       ),
                column(9, plotlyOutput("MIRvHumans"))
@@ -175,7 +180,7 @@ ui <- fluidPage(
              br(),
              br()
              ),#ED Map TabPanel closure
-#==========================================MIR MAP (UI)=============================================================#
+#========================================== MAP (UI)=============================================================#
    
     tabPanel("Mosquito Activity by Trap", id = "Map",
              
@@ -221,7 +226,8 @@ ui <- fluidPage(
 tabPanel("Human Surveillance", id = "Humans",
          
          fluidRow(
-           column(4, h3(strong("Human West Nile Cases"), style = "padding-bottom: 10px; padding-top: 5px"),
+           column(4, style='border-right:1px solid #b2b2b2; padding-right:30px; padding-bottom:60px',
+                  h3(strong("Human West Nile Cases"), style = "padding-bottom: 10px; padding-top: 5px"),
                    p("People with a positive laboratory test for WNV, or people who are suspected to have WNV based on their 
                      symptoms, must be reported to the local health department where the patient resides. The Cook County 
                      Department of Public Health jurisdiction includes all of suburban Cook County, excluding Evanston, 
@@ -231,8 +237,22 @@ tabPanel("Human Surveillance", id = "Humans",
                      might also have headache, body aches, fatigue, joint pain, or gastrointestinal symptoms. Neuroinvasive 
                      disease is more serious and includes meningitis, encephalitis, acute flaccid paralysis, or other
                      neurological symptoms.", align = "justify", style = "padding-bottom: 10px"),
-                   p("Since Week 20, two cases of West Nile Virus have been reported in suburban Cook County; one case was neuroinvasive.", 
-                     align = "justify", style = "padding-bottom: 10px"))
+                   p("Since Week 20, two cases of West Nile virus have been reported in suburban Cook County; one case was neuroinvasive.", 
+                     align = "justify", style = "padding-bottom: 10px")),
+           column(8,
+                  sidebarLayout(
+
+                    mainPanel(width = 10,
+                              plotlyOutput("human_mosq_plot", height = "500px")
+                    ),
+                    sidebarPanel(width = 2, 
+                                 radioButtons("human_perc_or_mir", "Mosquito Surveillance Comparison Value",
+                                              c("% Pos Pools", "MIR"),
+                                              selected = c("% Pos Pools")
+                                 )
+                    )
+                  ))
+           
                    ),
          hr(),
 
@@ -240,39 +260,38 @@ tabPanel("Human Surveillance", id = "Humans",
          #   column(12, h4(strong("Seasonal Comparison of Human WNV Cases"), style = "padding-bottom: 10px; padding-top: 5px"))
          # ),
          br(),
+         h3("Historic Case Data"),
          sidebarLayout(
            sidebarPanel(width = 2,
+             # checkboxGroupInput("human_year", "Display Season(s)",
+             #                    choiceValues = c(2005:year, "3 Year Average"),
+             #                    selected = "2019",
+             #                    choiceNames = c("2005 (Outbreak Year)",
+             #                                    2006:2011,
+             #                                    "2012 (Outbreak Year)",
+             #                                    2013:year,
+             #                                    paste0("3 Year Avg. (", year-3, "-", year-1, ")"))
+             # )
              checkboxGroupInput("human_year", "Display Season(s)",
-                                choiceValues = c(2005:year, "3 Year Average"),
-                                selected = "2019",
-                                choiceNames = c("2005 (Outbreak Year)",
-                                                2006:2011,
-                                                "2012 (Outbreak Year)",
-                                                2013:year,
-                                                paste0("3 Year Avg. (", year-3, "-", year-1, ")"))
+                                choiceValues = c(2012, (year-4):year),
+                                selected = c("2012", "2018", "2019"),
+                                choiceNames = c("2012 (Last Outbreak Year)",
+                                                (year-4):year)
              )
            ),
            mainPanel(width = 10,
                      fluidRow(
-                       column(6, plotlyOutput("cases_plot", height = "500px"), br(), br()),
-                       column(6, plotlyOutput("cases_heatmap", height = "500px"), br(), br())
+                       column(12, uiOutput("human_year_ui"), br(), br())
+                       
                        )
              
            )
          ),
-         br(),hr(),br(),
+         br(), hr(), br(),
+         #fluidRow(column(6, plotlyOutput("cases_heatmap", height = "500px"), br(), br())),
+         #br(),hr(),br(),
          
-         sidebarLayout(
-           sidebarPanel(width = 2,
-                        radioButtons("human_perc_or_mir", "Mosquito Surveillance Comparison",
-                                     c("% Pos Pools", "MIR"),
-                                     selected = c("% Pos Pools")
-                        )
-           ),
-           mainPanel(width = 10,
-                     plotlyOutput("human_mosq_plot")
-           )
-         ),
+
          br(), br()
       ),#icu tab closure
 
