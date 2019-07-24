@@ -255,22 +255,10 @@ tabPanel("Human Surveillance", id = "Humans",
                    ),
          hr(),
 
-         # fluidRow(
-         #   column(12, h4(strong("Seasonal Comparison of Human WNV Cases"), style = "padding-bottom: 10px; padding-top: 5px"))
-         # ),
          br(),
          h3("Historic Case Data"),
          sidebarLayout(
            sidebarPanel(width = 2,
-             # checkboxGroupInput("human_year", "Display Season(s)",
-             #                    choiceValues = c(2005:year, "3 Year Average"),
-             #                    selected = "2019",
-             #                    choiceNames = c("2005 (Outbreak Year)",
-             #                                    2006:2011,
-             #                                    "2012 (Outbreak Year)",
-             #                                    2013:year,
-             #                                    paste0("3 Year Avg. (", year-3, "-", year-1, ")"))
-             # )
              checkboxGroupInput("human_year", "Display Season(s)",
                                 choiceValues = c(2012, (year-4):year),
                                 selected = c("2012", "2018", "2019"),
@@ -287,8 +275,6 @@ tabPanel("Human Surveillance", id = "Humans",
            )
          ),
          br(), hr(), br(),
-         #fluidRow(column(6, plotlyOutput("cases_heatmap", height = "500px"), br(), br())),
-         #br(),hr(),br(),
          
 
          br(), br()

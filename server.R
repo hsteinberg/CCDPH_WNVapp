@@ -18,15 +18,7 @@ server <- function(input, output, session) {
       filter(as.character(MMWRyear) %in% plot_years) %>%
       ungroup() %>%
       mutate(MMWRyear = factor(MMWRyear, levels = plot_years))
-      
-    # disp_years = c(year-3, year-2, year-1, year) %>% as.character
-    # year_colors = c(greys[1], greys[2],  greys[4], color_pal[1])
-    # names(year_colors) = disp_years
-    # plot_colors = year_colors[unique(mosq_data$Year)]
-    # 
-    # year_lines = c("dot", "dash", "dashdot", "solid")
-    # names(year_lines) = disp_years
-    # plot_lines = year_lines[unique(mosq_data$Year)]
+
     
     #Set plot colors and line types
     
@@ -88,11 +80,6 @@ server <- function(input, output, session) {
       plot_lines[n] = "solid"
     }
 
-    # year_colors = c("2016" = greys[1], "2017" = greys[2], "2018" = greys[4], "2019" = color_pal[1])
-    # plot_colors = year_colors[unique(mir_by_year$MMWRyear)]
-    # 
-    # year_lines = c("2016" = "dot", "2017" = "dash", "2018" = "dashdot", "2019" = "solid")
-    # plot_lines = year_lines[unique(mir_by_year$MMWRyear)]
     
     #produce plot
     plot_ly(data = mir_by_year, x = ~Week_Start, y = ~MIR, color = ~MMWRyear, 
@@ -151,8 +138,6 @@ server <- function(input, output, session) {
   output$MIRvHumans <- renderPlotly({
     years = 2005:(year-1)
     human_cases_year = sapply(years, function(x){
-      #i = grep(as.character(x), colnames(humans))
-      #n = sum(humans[,i])
       n = sum(humans_long$Cases[humans_long$Year == x])
       return(n)
     })
@@ -224,64 +209,6 @@ server <- function(input, output, session) {
       
   })
   
-  # #cases by year bar/line plots
-  # output$cases_plot <- renderPlotly({
-  #   #cases_plot
-  #   if(is.null(input$human_year)){
-  #     
-  #   }else if(length(input$human_year) == 1 & input$human_year != "3 Year Average"){
-  #     plot_year = input$human_year
-  #     year_col = grep(plot_year, colnames(humans))
-  #     plot_data = humans[,c(1,year_col)] %>%
-  #       set_colnames(c("CollectionWeek", "Cases")) %>%
-  #       replace_na(list(Cases = 0)) %>%
-  #       mutate(Week_Start = week_starts) %>%
-  #       mutate(Week_Start = factor(Week_Start, levels = Week_Start)) %>%
-  #       mutate(Week_Start_Year = do.call(c, map(as.numeric(CollectionWeek), MMWRweek2Date, MMWRyear = as.numeric(plot_year)))) %>%
-  #       mutate(Week_Start_Year = format(Week_Start_Year, "%b-%d")) %>%
-  #       mutate(Week_Start_Year = factor(Week_Start_Year, levels = Week_Start_Year))
-  #       
-  #     ymax = max(plot_data$Cases, 20, na.rm = T)
-  #     
-  #     plot_ly(data = plot_data, x = ~Week_Start_Year, y = ~Cases, marker = list(color = color_pal[4]), type = "bar") %>%
-  #       layout(xaxis = list(title = "Week Start Date", tickangle = 270),
-  #              yaxis = list(title = "Human WNV Cases", range = c(0,ymax)),
-  #              title = paste("Human WNV Cases in Suburban Cook County in", plot_year),
-  #              hovermode = 'compare'
-  #              )
-  #   } else {
-  #     plot_years = input$human_year
-  #     #plot_years = c("2012", "2018", "2019")
-  #     plot_data = humans_long %>%
-  #       filter(Year %in% plot_years) %>%
-  #       mutate(Week_Start = week_starts[as.character(CollectionWeek)]) %>%
-  #       mutate(Week_Start = factor(Week_Start, levels = week_starts)) %>%
-  #       filter(Year != year)
-  #     
-  #     plot_cols = rep(color_pal,5)[1:length(plot_years)]
-  #     plot_lines = c(rep("solid",5), rep("dash",5), rep("dashdot",5))[1:length(plot_years)]
-  #     
-  #     p<- plot_ly(data = plot_data, x = ~Week_Start, y = ~Cases, type = "scatter", mode = "lines",
-  #             color = ~Year, colors = plot_cols, linetype = ~Year, linetypes = plot_lines) %>%
-  #       layout(xaxis = list(title = "Week Start Date", tickangle = 270, showgrid = F),
-  #              yaxis = list(title = "Human WNV Cases", showgrid = F),
-  #              title = "Human WNV Cases in Suburban Cook County",
-  #              hovermode = 'compare'
-  #       )
-  #     
-  #     if(year %in% input$human_year){
-  #       plot_this_year = humans_long %>%
-  #         filter(Year == year)%>%
-  #         mutate(Week_Start = week_starts[as.character(CollectionWeek)]) %>%
-  #         mutate(Week_Start = factor(Week_Start, levels = week_starts))
-  #       
-  #       p <- p %>%
-  #         add_trace(data = plot_this_year, x = ~Week_Start, y = ~Cases, type = "bar", marker = list(color = color_pal[4]),
-  #                   name = year)
-  #     }
-  #     suppressWarnings(p)
-  #   } 
-  # })
   
   #cases by year bar/line plots
   output$cases_plot <- renderPlotly({
@@ -301,33 +228,6 @@ server <- function(input, output, session) {
         #mutate(Cases = ifelse(Year==year&CollectionWeek>week, NA, Cases))
       
       plot_colors = c(color_pal, greys)[1:length(plot_years)]
-
-      # plot_ly(data = plot_data, x = ~Week, y = ~Cases, type = "scatter", mode = "lines",
-      #             color = ~Year, colors = plot_colors,
-      #             xaxis = ~paste0("x", Year)) %>%
-      #   layout(xaxis = list(title = "Week Start Date", tickangle = 270, showgrid = F),
-      #          yaxis = list(title = "Human WNV Cases", showgrid = T),
-      #          title = plot_years
-      #   ) %>%
-      #   #add_lines() %>%
-      #   subplot(nrows = 1, shareY = TRUE, margin = 0.02)
-      
-      # p<- ggplot(data=plot_data, aes(x=Week, y=Cases,group=Year, color=Year)) +
-      #   geom_line()+
-      #   scale_color_manual(values=plot_colors)+
-      #   facet_wrap(~Year, nrow=1) +
-      #   theme(axis.text.x = element_text(angle = 90,color=rep(c("black","transparent"),11)),
-      #         panel.grid.major.x = element_blank(),
-      #         panel.grid.minor.x = element_blank(),
-      #         panel.background = element_rect(fill = "white", colour = "grey50"),
-      #         panel.grid.major = element_line(colour = "grey80"),
-      #         plot.margin = margin(t=10,r=10,b=10,l=50)
-      #         ) +
-      #   xlab("") +
-      #   ylab("Human WNV Cases") +
-      #   annotate("rect", xmin="May-12", xmax="Oct-06", ymin=4, ymax=6,
-      #            alpha = .2, text = "")
-      # ggplotly(p,  tooltip=c("x", "y"))
       
       plot_rows = ceiling(length(plot_years)/4)
       
@@ -354,129 +254,10 @@ server <- function(input, output, session) {
     plotlyOutput("cases_plot", height = ifelse((ceiling(length(input$human_year)/4) ==1),500,750 ))
   })
   
-  #cases by year heatmap
-  output$cases_heatmap <- renderPlotly({
-    
-    h <- humans %>%
-      filter(CollectionWeek %in% 20:41) %>%
-      select(-c("CollectionWeek", "Avg_3")) %>%
-      set_colnames(c(2005:year)) %>%
-      set_rownames(as.character(week_starts)) %>%
-      t() %>%
-      as.matrix()
-    
-    hovtext = sapply(colnames(h), function(week){
-      sapply(rownames(h), function(year){
-        return(
-          paste("Week start:", week, "\nYear:", year, "\nWNV Cases:", h[year,week])
-        )
-      })
-    })
-    
-    plot_ly(z = h, x = colnames(h), y = rownames(h), type = "heatmap", colors = "Blues",
-            text = hovtext, hoverinfo = "text") %>%
-      layout(
-        xaxis = list(title = "Week Start Date", showgrid = F, tickangle = 270),
-        yaxis = list(title = "Year", showgrid = F, dtick = 1),
-        title = "Human WNV Cases by Season in Suburban Cook County"
-      )
-  })
-
-  
+ 
 #========================================== MAP (SERVER)=============================================================#
   
-  #Pos traps/birds/humans map
-  # output$wnv_map <- renderLeaflet({
-  #   cook <- cook[-(which(cook$municipali == "Chicago")),]
-  #   
-  #   mosq_pos_year <- mosquito_year_table %>%
-  #     filter(WNVpos == 1) %>%
-  #     group_by(City) %>%
-  #     summarise(pos_mosqs = sum(WNVpos))
-  #   
-  #   mosq_points <- apply(mosq_pos_year, 1, function(x){
-  #     city = x["City"]
-  #     count = x["pos_mosqs"] %>% as.numeric()
-  #     polygon = cook[which(toupper(cook$municipali) == city),]
-  #     pnts = spsample(polygon, count, "random", iter=10) %>% as.data.frame() 
-  #     colnames(pnts) = c("x", "y")
-  #     return(pnts)
-  #   }) 
-  #   
-  #   mosq_points = do.call(rbind, mosq_points)
-  #   
-  #   bird_towns = c("Northbrook" = 1) %>% 
-  #     as.data.frame() %>% 
-  #     mutate(City = "Northbrook") %>%
-  #     set_colnames(c("Count", "City"))
-  #   
-  #   
-  #   bird_points <- apply(bird_towns, 1, function(x){
-  #     city = x["City"]
-  #     count = x["Count"] %>% as.numeric()
-  #     polygon = cook[which(cook$municipali == city),]
-  #     pnts = spsample(polygon, count, "random", iter=10) %>% as.data.frame() 
-  #     colnames(pnts) = c("x", "y")
-  #     return(pnts)
-  #   }) 
-  #   
-  #   bird_points = do.call(rbind, bird_points)
-  #   
-  #   
-  #   human_towns = c("Northbrook" = 1, "Rolling Meadows" = 2, "Alsip" = 1, "Des Plaines" = 3) %>% 
-  #     as.data.frame() %>% 
-  #     mutate(City = c("Northbrook", "Rolling Meadows", "Alsip", "Des Plaines") ) %>%
-  #     set_colnames(c("Count", "City"))
-  #   
-  #   
-  #   human_points <- apply(human_towns, 1, function(x){
-  #     city = x["City"]
-  #     count = x["Count"] %>% as.numeric()
-  #     polygon = cook[which(cook$municipali == city),]
-  #     pnts = spsample(polygon, count, "random", iter=10) %>% as.data.frame() 
-  #     colnames(pnts) = c("x", "y")
-  #     return(pnts)
-  #   }) 
-  #   
-  #   human_points = do.call(rbind, human_points)
-  #   human_icon <- makeAwesomeIcon(icon = "user", library = "glyphicon", markerColor = "darkred", iconColor = "white")
-  #   bird_icon <- makeAwesomeIcon(icon = "twitter", library = "fa", markerColor = "orange", iconColor = "white")
-  #   
-  #   leaflet(cook, options = leafletOptions(minZoom = 9.4)) %>% addProviderTiles(providers$CartoDB.Positron) %>%  setView(lng = -87.86, lat = 41.81, zoom = 10) %>%
-  #     addPolygons(
-  #       fillColor = color_pal[1],
-  #       weight = 2,
-  #       opacity = 6,
-  #       color = "white",
-  #       dashArray = "3",
-  #       fillOpacity = 0.3,
-  #       highlight = highlightOptions(weight = 4, color = "white", dashArray = "1", fillOpacity = 0.7, bringToFront = FALSE),
-  #       #label = paste(cc$CITY, "<br/> Chlamydia Cases:", cl_2017),
-  #       label = cook$municipali,
-  #       labelOptions = labelOptions(
-  #         style = list("font-weight" = "normal", padding = "3px 8px"),
-  #         textsize = "15px", direction = "auto")
-  #     ) %>%
-  #     addScaleBar(position = "bottomleft") %>%
-  #     addCircles(mosq_points[,1], mosq_points[,2],
-  #                color = color_pal[2], fillOpacity = 1, stroke = F,
-  #                radius = 300) %>%
-  #     # addCircles(bird_points[,1], bird_points[,2],
-  #     #            color = color_pal[3], fillOpacity = 1, stroke = F,
-  #     #            radius = 750) %>%
-  #     # addCircles(human_points[,1], human_points[,2],
-  #     #            color = color_pal[4], fillOpacity = 1, stroke = F,
-  #     #            radius = 750) %>%
-  #     addAwesomeMarkers(human_points[,1], human_points[,2],
-  #                       icon = human_icon)  %>%
-  #     addAwesomeMarkers(bird_points[,1], bird_points[,2],
-  #                       icon = bird_icon)  %>%
-  #     addLegend("topright", colors = color_pal[c(2,3,4)], 
-  #               labels = c("WNV Positive Mosquito Pool", "WNV Positive Bird", "Human WNV Case"),
-  #               opacity = 1)
-  #   
-  # })
-  
+
   #Get week selected in map week slider
   map_week <- reactive({
     MMWRweek(input$map_week)[[2]]
@@ -549,7 +330,7 @@ server <- function(input, output, session) {
       ) %>%
       addScaleBar(position = "bottomleft") %>%
     
-    
+    #download button
     onRender(
       "function(el, x) {
       L.easyPrint({
