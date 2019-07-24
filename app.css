@@ -49,6 +49,12 @@ Home Tab
   height: 200px;
 }
 
+*/
+.prevpic {
+  height: 400px;
+}
+
+
 /*
 #risk {
    padding-bottom: 10px;
@@ -122,12 +128,24 @@ background: #EEE;
 
 /*
 ==================================
+Bird Tab
+=================================
+
+#bird_text {
+   padding-bottom: 0px;
+   font:  Georgia;
+}
+*/
+
+/*
+==================================
 General Styles
 =================================
 */
 
 p {
   letter-spacing: .05em;
+  text-align: justify;
 }
 
 .shiny-text-output {

@@ -48,7 +48,7 @@ server <- function(input, output, session) {
             text = paste0("Week ", mosq_data$MMWRweek,", ", mosq_data$MMWRyear, "\nStart Date: ", mosq_data$Week_Start_Year,
                           "\n", round(mosq_data$percent_positive, 1), "% of pools were positive for WNV"), hoverinfo = "text") %>%
       layout(xaxis = list(title = "Week Start Date", showgrid = FALSE, tickangle = 270,
-                          range = c(1,22)),
+                          range = c(-1,22)),
              yaxis = list(title = "% of Pools Positive for WNV", showgrid = FALSE),
              title = "Percent of Mosquito Pools Positive for West Nile Virus")
     
@@ -70,12 +70,13 @@ server <- function(input, output, session) {
   #MIR by year plot
   output$mir_year <- renderPlotly({
     #subset MIR to only selected years
+    plot_years = input$mir_years
     mir_by_year = mir_by_year %>%
-      filter(MMWRyear %in% input$mir_years)%>%
-      mutate(MMWRyear = factor(MMWRyear, levels = input$mir_years))
+      filter(MMWRyear %in% plot_years)%>%
+      mutate(MMWRyear = factor(MMWRyear, levels = plot_years))
     
     #Set plot colors and line types
-    plot_years = input$mir_years
+
     n = length(plot_years)
     dash_types = c("dot", "dash", "dashdot")
     plot_cols = rep(greys,10)[1:n]
@@ -100,7 +101,7 @@ server <- function(input, output, session) {
             text = paste0("Week ", mir_by_year$MMWRweek,", ", mir_by_year$MMWRyear, "\nStart Date: ", mir_by_year$Week_Start_Year,
                           "\nMinimum Infection Rate: ", round(mir_by_year$MIR, 1), " per 1,000 Mosquitos"), hoverinfo = "text")%>%
       layout(xaxis = list(title = "Week Start Date", showgrid = FALSE, tickangle = 270,
-                          range = c(1,22)),
+                          range = c(-1,22)),
              yaxis = list(title = "WNV MIR (per 1,000 Mosquitos)", showgrid = FALSE),
              title = "West Nile Virus Minimum Infection Rate")
     
@@ -111,10 +112,12 @@ server <- function(input, output, session) {
   output$mir_district <- renderPlotly({
     plot_ly(data = mir_district, x = ~Week_Start, y = ~MIR, color = ~District, colors = color_pal[1:4],
             mode = 'lines',  type = "scatter") %>%
-      layout(xaxis = list(title = "Week Start Date", showgrid = FALSE, tickangle = 270, range = c(1,22)),
-             yaxis = list(title = "WNV MIR (per 1,000 Mosquitos)", showgrid = FALSE),
-             title = paste("West Nile Virus Minimum Infection Rate by Suburban Cook County District,",year),
-             hovermode = 'compare')
+      layout(xaxis = list(title = "Week Start Date", showgrid = FALSE, tickangle = 270, range = c(-1,22)),
+             yaxis = list(title = "WNV MIR (per 1,000 Mosquitos)", showgrid = FALSE,
+                          range = c(-0.1, (max(5,max(mir_district$MIR)+1)))),
+             title = paste("West Nile Virus Minimum Infection Rate \nby Suburban Cook County District,",year),
+             hovermode = 'compare',
+             margin = list(t = 60))
   })
   
   #district map
@@ -148,8 +151,9 @@ server <- function(input, output, session) {
   output$MIRvHumans <- renderPlotly({
     years = 2005:(year-1)
     human_cases_year = sapply(years, function(x){
-      i = grep(as.character(x), colnames(humans))
-      n = sum(humans[,i])
+      #i = grep(as.character(x), colnames(humans))
+      #n = sum(humans[,i])
+      n = sum(humans_long$Cases[humans_long$Year == x])
       return(n)
     })
     peak_mir_year = sapply(years, function(x){
@@ -165,7 +169,8 @@ server <- function(input, output, session) {
             ) %>%
       layout(xaxis = list(title = "Season Peak MIR"),
              yaxis = list(title = "Number of Human WNV Cases"),
-             title = "Mosquito MIR is Associated with Number of Human WNV Cases in a Season"
+             title = "Mosquito MIR is Associated with\nNumber of Human WNV Cases in a Season",
+             margin = list(t = 60)
              )
     
   })
@@ -176,9 +181,9 @@ server <- function(input, output, session) {
   #human cases and mosquito percent pos/mir plot
   output$human_mosq_plot <- renderPlotly({
     #human_mosq_plot
-    cur_year_cases <- humans %>%
-      select(CollectionWeek, paste0("Yr_", year)) %>%
-      set_colnames(c("CollectionWeek", "Cases")) %>%
+    cur_year_cases <- humans_long %>%
+      filter(Year == year) %>%
+      select(CollectionWeek, Cases) %>%
       mutate(Week_Start = week_starts) %>%
       mutate(Week_Start = factor(Week_Start, levels = Week_Start)) %>%
       replace_na(list(Cases = 0)) %>%
@@ -191,13 +196,13 @@ server <- function(input, output, session) {
     if(input$human_perc_or_mir == "% Pos Pools"){
       yvar2 = cur_year_cases$perc_pos
       name2 = "% Pos Pools"
-      title2 = "Percent of Mosquito Pools Positive for WNV"
+      title2 = "Percent of Mosquito Pools\nPositive for WNV"
       max2 = 100
     }
     else if(input$human_perc_or_mir == "MIR"){
       yvar2 = cur_year_cases$MIR
       name2 = "MIR"
-      title2 = "Mosquito Minimum Infection Rate per 1,000"
+      title2 = "Mosquito Minimum Infection\nRate per 1,000"
       max2 = max(yvar2, 20, na.rm = T)
     }
     
@@ -207,14 +212,14 @@ server <- function(input, output, session) {
         add_trace(x = ~Week_Start, y = yvar2, name = name2, yaxis = "y2",
                   type = "scatter", mode = "lines+markers", line = list(color = color_pal[2]),
                   marker = list(color = color_pal[2])) %>%
-      layout(xaxis = list(title = "Week Start Date", tickangle = 270, showgrid = F, range = c(0,22)),
+      layout(xaxis = list(title = "Week Start Date", tickangle = 270, showgrid = F, range = c(-1,22)),
              yaxis = list(title = "Human WNV Cases", range = c(0,ymax), showgrid = F),
              yaxis2 = list(title = title2, side = "right", overlaying = "y",
                            range = c(0,max2), showgrid = F),
-             legend = list(orientation = 'v', x = 0.8, y = 1),
+             legend = list(orientation = 'v', x = 0.95, y = 0.95,  xanchor = "right"),
              margin = list(b = 100, l = 100, r = 100, t = 100),
              hovermode = 'compare',
-             title = paste("Human WNV Cases and Mosquito Surveillance in Suburban Cook County,", year)
+             title = paste("Human WNV Cases and Mosquito Surveillance\nin Suburban Cook County,", year)
              )
       
   })
@@ -291,7 +296,7 @@ server <- function(input, output, session) {
         mutate(Year = factor(Year, levels=plot_years)) %>%
         mutate(Cases = ifelse(Year==year&CollectionWeek>week, NA, Cases)) %>%
         #mutate(Week = MMWRweek2Date(as.numeric(as.character(Year)), CollectionWeek))
-        rename(Week = Week_Start)
+        mutate(Week = Week_Start)
         
         #mutate(Cases = ifelse(Year==year&CollectionWeek>week, NA, Cases))
       
@@ -472,22 +477,24 @@ server <- function(input, output, session) {
   #   
   # })
   
-  #Pos this week/previous week map
+  #Get week selected in map week slider
   map_week <- reactive({
     MMWRweek(input$map_week)[[2]]
   })
   
+  #Format selected week as its start date
   map_week_date <- reactive({
     format(input$map_week, "%B %d, %Y")
   })
   
+  #Format data for positive traps map
   pos_traps_week_data <- reactive({
     ever_pos = mosquito_year_table %>% 
       filter(MMWRweek <= map_week()) %>%
       group_by(LocationID) %>%
       dplyr::summarise(ever_pos = sum(WNVpos) > 0,
                 pos_this_week = (TRUE %in% (WNVpos == 1 & MMWRweek == map_week())),
-                last_pos = ifelse(sum(WNVpos) > 0, max(Collection_Date[WNVpos == 1]), NA)
+                last_pos = ifelse(ever_pos == TRUE, max(Collection_Date[WNVpos == 1]), NA)
       ) %>%
       filter(ever_pos == TRUE) %>%
       mutate(last_pos = format(as.Date(last_pos, origin = "1970-01-01"), "%b %d")) %>%
@@ -497,9 +504,10 @@ server <- function(input, output, session) {
       mutate(City = simpleCap(City))
   })
   
+  #Format data for MIR map
   mir_traps_week_data <- reactive({
     mir_traps <- mosquito_year_table %>%
-      mutate(LocationID = factor(LocationID, levels = levels(mosquito_week_table$LocationID))) %>%
+      mutate(LocationID = factor(LocationID, levels = trap_locations$LocationID[trap_locations$City != "CHICAGO"])) %>%
       filter(MMWRweek == map_week()) %>%
       complete(LocationID) %>%
       group_by(LocationID) %>%
@@ -521,6 +529,7 @@ server <- function(input, output, session) {
     return(mir_traps)
   })
   
+  #Traps base map
   output$wnv_map <- renderLeaflet({
     updateSelectInput(session, "map_type")
     cook = cook[-which(cook$municipali == "Chicago"),]
@@ -538,17 +547,30 @@ server <- function(input, output, session) {
           textsize = "15px", direction = "auto"),
         highlight = highlightOptions(weight = 4, color = "white", dashArray = "1", fillOpacity = 0.7, bringToFront = FALSE)
       ) %>%
-      addScaleBar(position = "bottomleft") 
+      addScaleBar(position = "bottomleft") %>%
     
+    
+    onRender(
+      "function(el, x) {
+      L.easyPrint({
+      sizeModes: ['Current', 'A4Landscape', 'A4Portrait'],
+      filename: 'Suburban Cook County Mosquito Surveillance Map',
+      exportOnly: true,
+      hideClasses: ['leaflet-control-easyPrint'],
+      hideControlContainer: false,
+      
+      }).addTo(this);
+  }"
+        )
 
   })
   
 
-  
+  #Update map dots when map week or map type is changed, or when tab is selected
   observeEvent({
     input$map_week
     input$map_type
-    input$menu == "Mosquito Traps Map"
+    input$menu == "Mosquito Activity by Trap"
   },{
     
     if(input$map_type == "Positive Traps"){
@@ -568,7 +590,7 @@ server <- function(input, output, session) {
         )%>%
         clearControls() %>%
         addLegend("topright", colors = c("#dd1c1a", "#e05e5c"), 
-                  labels = c(paste("Positive for WNV Week of", map_week_date()), "Positive for WNV this Season"),
+                  labels = c(paste("Positive week of", map_week_date()), "Positive this season"),
                   opacity = 0.85, title = "Mosquito Traps")
     } else if(input$map_type == "Trap Minimum Infection Rate"){
       
@@ -603,40 +625,25 @@ server <- function(input, output, session) {
   
   #bird testing waffle chart
   output$birds <- renderPlot({
-    negative = sum(birds$Negative, na.rm = TRUE)
-    positive = sum(birds$Positive, na.rm = TRUE)
-    untestable = sum(birds$Untestable, na.rm = TRUE)
+    negative = birds$Negative[birds$Year == year]
+    positive = birds$Positive[birds$Year == year]
+    untestable = birds$Untestable[birds$Year == year]
     
     bird_results = c("Negative WNV" = negative, "Positive WNV" = positive, "Untestable" = untestable)
     nrow = ceiling(sum(negative, positive, untestable)/10)
     
+    if(nrow > 0){
     waffle(bird_results, rows = nrow, 
-           #colors = c("#33cc00", "#ff4000",  "#c9c9c9"),
-           colors = c("#4DCC64", "#FF5121",  "#c9c9c9"),
-           
-           #colors = c(color_pal[1], color_pal[3], greys[2]),
-           reverse = F, flip = F, xlab = "1 square = 1 bird", legend_pos = "bottom")
-    
+           colors = c("#4DCC64", "#FF5121","#c9c9c9"),
+           reverse = F, flip = F, xlab = "", legend_pos = "bottom")+
+      xlab("1 square = 1 bird")+
+      theme(legend.text = element_text(size = 14),
+            axis.title.x = element_text(size=14))
+    }
 
   })
   
-  #Bird tests text
-  output$bird_text <- renderText({
-    submitted = sum(birds$Submitted, na.rm = TRUE) %>% replace_number() %>% simpleCap()
-    negative = sum(birds$Negative, na.rm = TRUE) %>% replace_number()
-    positive = sum(birds$Positive, na.rm = TRUE) %>% replace_number()
-    untestable = sum(birds$Untestable, na.rm = TRUE) %>% replace_number() %>% simpleCap()
-    pos_cities = birds[,grep("City",colnames(birds))] 
-    pos_cities = pos_cities[!is.na(pos_cities)] %>% table()
-    pos_birds = paste0(as.numeric(pos_cities) %>% replace_number() %>% simpleCap(), 
-                       " bird(s) tested positive from ", names(pos_cities), ".") %>%
-      paste(collapse = " ")
-    out = paste0(submitted, " bird(s) have been submitted for testing and ",
-                 negative, " have tested negative. ", pos_birds,
-                 " ", untestable, " bird(s) were untestable.")
-    
-  })
-  
+
 
 }#Server function closure
 

@@ -8,11 +8,13 @@ ui <- fluidPage(
   includeCSS("app.css"),
   
   #Add Google analytics global tracking code
-  # tags$head(HTML('<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107917571-1"></script>')),
-  # tags$head(tags$script(HTML(" window.dataLayer = window.dataLayer || [];
-  #                             function gtag(){dataLayer.push(arguments);}
-  #                             gtag('js', new Date());
-  #                             gtag('config', 'UA-107917571-1')"))),
+  tags$head(HTML('<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131221855-2"></script>')),
+  tags$head(tags$script(HTML(" window.dataLayer = window.dataLayer || [];
+                              function gtag(){dataLayer.push(arguments);}
+                              gtag('js', new Date());
+                              gtag('config', 'UA-131221855-2')"))),
+  tags$head(tags$script(src = "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js")),
+  
   
   #Building the header 
   fluidRow(class = "header",
@@ -28,24 +30,23 @@ ui <- fluidPage(
              fluidRow(
                column(2, style = "padding-right: 50px;",
                       fluidRow(
-                        column(12, class = "homestrip", img(src="https://phil.cdc.gov//PHIL_Images/17325/17325_lores.jpg", class = "img-responsive imggen"))
+                        column(12, class = "homestrip", img(src="https://phil.cdc.gov//PHIL_Images/14886/14886_lores.jpg", class = "img-responsive imggen"))
+                      ), #orignal pic 17325
+                      fluidRow(
+                        column(12, class = "homestrip", img(src="https://phil.cdc.gov//PHIL_Images/14886/14886_lores.jpg", class = "img-responsive imggen"))
                       ),
                       fluidRow(
-                        column(12, class = "homestrip", img(src="https://phil.cdc.gov//PHIL_Images/17325/17325_lores.jpg", class = "img-responsive imggen"))
-                      ),
-                      fluidRow(
-                        column(12, class = "homestrip", img(src="https://phil.cdc.gov//PHIL_Images/17325/17325_lores.jpg", class = "img-responsive imggen"))
+                        column(12, class = "homestrip", img(src="https://phil.cdc.gov//PHIL_Images/14886/14886_lores.jpg", class = "img-responsive imggen"))
                       )
                ),
+
                #Building home page text    
-              
-#########################################################################################################################################
-#UPDATE RISK LEVEL WHEN NEEDED. CHANGE ID TO LOWRISK, MEDRISK, OR HIGHRISK TO MATCH RISK LEVEL#
-#########################################################################################################################################
-               
                column(7, 
-                    p(id = "lowrisk", "As of ",strong(paste("Week", week))," the risk of human West Nile virus in Suburban Cook
-                           County is ", strong("HIGH.")),
+                     p(id = ifelse(risk == "LOW.", "lowrisk",
+                                   ifelse(risk == "INCREASING."|risk == "DECREASING.", "medrisk",
+                                          "highrisk")), 
+                          "As of ",strong(paste("Week", week))," the risk of human West Nile virus in Suburban Cook
+                           County is ", strong(risk)),
                      h4(strong("What is West Nile virus?"), style = "padding-bottom: 3px; padding-top: 15px"),
                      p("West Nile virus (WNV) is a serious disease most commonly spread by infected mosquitoes. Mosquitoes become infected when 
                        they feed on infected birds. Infected mosquitoes can then spread the virus to humans and other animals. Symptoms are usually 
@@ -53,7 +54,7 @@ ui <- fluidPage(
                        at all. However, in rare cases, severe illness including encephalitis (inflammation of the brain), meningitis (inflammation 
                        of the lining of the brain and spinal cord), or even death, can occur. More information on West Nile virus can be found on 
                        the Centers for Disease Control and Prevention website at ",
-                       a(href = "https://www.cdc.gov/westnile", "https://www.cdc.gov/westnile"), ".", align = "justify", style = "padding-bottom: 10px"),
+                       a(href = "https://www.cdc.gov/westnile", "https://www.cdc.gov/westnile", target="_blank"), ".", align = "justify", style = "padding-bottom: 10px"),
                      h4(strong("Why do surveillance for West Nile virus?"), style = "padding-bottom: 3px; padding-top: 5px"),
                      p("Most people get infected with West Nile virus after being bitten by an infected mosquito. However, sometimes symptoms don't 
                        begin until two weeks after the bite. West Nile virus activity in mosquitoes and birds can provide an earlier signal of 
@@ -63,27 +64,19 @@ ui <- fluidPage(
                      h4(strong("What is this application?"), style = "padding-bottom: 3px; padding-top: 5px"),
                      p("During periods when increased West Nile virus activity is expected (generally from June through October*), suburban Cook County's 
                        four mosquito abatement districts (MADs) - ",
-                       a(href = "https://www.nsmad.com/", "the North Shore MAD"), ", ", 
-                       a(href = "https://www.nwmadil.com/", "the Northwest MAD"), ", ", 
-                       a(href = "https://www.desplainesvalleymad.com/", "the Desplaines Valley MAD"), ", and ", 
-                       a(href = "https://www.sccmad.org/", "the South Cook County MAD"), "  - and the Cook County Department of Public Health and the Illinois 
+                       a(href = "https://www.nsmad.com/", "the North Shore MAD", target="_blank"), ", ", 
+                       a(href = "https://www.nwmadil.com/", "the Northwest MAD", target="_blank"), ", ", 
+                       a(href = "https://www.desplainesvalleymad.com/", "the Desplaines Valley MAD", target="_blank"), ", and ", 
+                       a(href = "https://www.sccmad.org/", "the South Cook County MAD", target="_blank"), "  - and the Cook County Department of Public Health and the Illinois 
                        Department of Public Health, trap and test mosquitos for West Nile virus. The Cook County Department of Public Health also tests dead birds 
                        for West Nile virus and conducts disease surveillance in humans. Surveillance data is compiled into a ",
-                       a(href = "http://cookcountypublichealth.org/data-reports/communicable-diseases", "weekly report"), " and shared with our partners in 
+                       a(href = "http://cookcountypublichealth.org/data-reports/communicable-diseases", "weekly report", target="_blank"), " and shared with our partners in 
                        mosquito control, the healthcare community, and the public. This application is a companion to our weekly report. Comments or questions 
                        on the application can be submitted", 
                        a(href = "mailto:hannah.steinberg@cookcountyhhs.org?Subject=Shiny%20WNV%20App", "here."), " The Cook County Department of Public 
                         Health would like to thank all of our surveillance partners for their help in collecting this information.", align = "justify", style = "padding-bottom: 10px"),
-                     h4(strong("What can I do to protect myself?"), style = "padding-bottom: 3px; padding-top: 5px"),                     
-                     p("When outdoors between dusk and dawn, cover skin with lightly colored lose fitting clothing and use mosquito repellent with DEET, 
-                       picaridin or oil of lemon eucalyptus. When applying repellent, always follow the directions on the product label. Get rid of standing water 
-                       around your home in pet bowls, flower pots, old tires, baby pools and toys. Water that is allowed to stagnate for three or four days becomes 
-                       a breeding ground for mosquitoes. Make sure your doors and windows have tightly fitting screens and repair any tears or other openings. 
-                       Keep weeds and grass cut short and keep gutters clean and free of debris.", align = "justify", style = "padding-bottom: 20px"),
-                     # p(id = "info", "For more information on WNV, please visit the Centers for Disease Control and Prevention at ",
-                     #   a(href = "https://www.cdc.gov/westnile/", "https://www.cdc.gov/westnile/"), "."),
                      tags$small("*The Centers for Disease Control and Prevention aggregates WNV data by ", a(href = "https://wwwn.cdc.gov/nndss/document/W2018-19.pdf",
-                        "MMWR Weeks. "), "MMWR Weeks run from Sunday to Saturday. For simplicity, graphs in this application typically display the first day of the MMWR Week 
+                        "MMWR Weeks. ", target="_blank"), "MMWR Weeks run from Sunday to Saturday. For simplicity, graphs in this application typically display the first day of the MMWR Week 
                         on the x axis. Starting dates are accurate for 2019 but are approximations for all other years displayed."),
                      br(), br(), br()
                )
@@ -131,13 +124,17 @@ ui <- fluidPage(
 
 
 #============================================MIR (UI)================================================================# 
-    tabPanel("Mosquito Infection Rate", id = "Mosq_Inf",
+    tabPanel("Minimum Infection Rate", id = "Mosq_Inf",
              fluidRow(
-               column(4, h3(strong("Minimum Infection Rate"), style = "padding-bottom: 10px; padding-top: 5px"), 
+               column(6, h3(strong("Minimum Infection Rate"), style = "padding-bottom: 10px; padding-top: 5px"), 
                       p("An important measure of West Nile virus activity in mosquitoes is the minimum infection rate.
-                        The minimum infection rate (MIR) is calculated by dividing the number of positive mosquito pools 
-                        by the total number of mosquitoes tested and multiplying by 1000. It is the most conservative estimate 
-                        of West Nile virus activity in mosquitoes and can be a good indicator of human risk in the coming weeks. 
+                        The minimum infection rate, or MIR, is calculated by dividing the number of positive mosquito pools 
+                        by the total number of mosquitoes tested and multiplying by 1000. Because mosquitoes are tested in groups
+                        of up to 50 mosquitoes, it's impossible to know how many in a batch were actually positive. The MIR
+                        makes the assumption that there is only one positive mosquito in each positive pool. Therefore, it is the most 
+                        conservative estimate of WNV activity. For example, an MIR of 5 would mean that for every 1,000
+                        mosquitoes tested, at least 5, but possibly more, were positive for WNV. MIR has been shown to be a good indicator 
+                        of when WNV activity is increasing and whether we might be experiencing an outbreak year.
                         ", 
                         align = "justify", style = "padding-bottom: 10px"))
                ),
@@ -160,7 +157,7 @@ ui <- fluidPage(
              fluidRow(
                column(3, h4(("Suburban Cook County Districts")),
                       leafletOutput("district_map")),
-               column(9, br(), br(),
+               column(9, br(),
                       plotlyOutput("mir_district"))
                
              ),
@@ -174,7 +171,7 @@ ui <- fluidPage(
                         of human cases.", 
                         align = "justify", style = "padding-bottom: 10px")
                       ),
-               column(9, plotlyOutput("MIRvHumans"))
+               column(8, plotlyOutput("MIRvHumans"))
              ),
              hr(),
              br(),
@@ -185,7 +182,7 @@ ui <- fluidPage(
     tabPanel("Mosquito Activity by Trap", id = "Map",
              
       fluidRow(
-        column( 4, h3(strong("Mosquito Activity by Trap"), style = "padding-bottom: 10px; padding-top: 5px"), 
+        column( 6, h3(strong("Mosquito Activity by Trap"), style = "padding-bottom: 10px; padding-top: 5px"), 
                              p("Mosquito traps in suburban Cook County are operated by the North Shore MAD, the Northwest MAD, the Desplaines
                                Valley MAD, the South Cook County MAD, the Cook County Department of Public Health, and the Illinois Department 
                                of Public Health. During WNV season, traps are typically collected at least once, but often several times, a week.
@@ -204,7 +201,9 @@ ui <- fluidPage(
         sidebarPanel(width = 3,
                      sliderInput("map_week", "Week Start Date",
                                         min = MMWRweek2Date(year, 20), max = MMWRweek2Date(year, week),
-                                        value = MMWRweek2Date(year, week), animate = T, step = 7, ticks = FALSE,
+                                        value = MMWRweek2Date(year, week), 
+                                 animate = animationOptions(interval = 1600, loop = FALSE), 
+                                 step = 7, ticks = FALSE,
                                  timeFormat = "%b %d"
                      ),
                      radioButtons("map_type", "Display Options",
@@ -237,7 +236,7 @@ tabPanel("Human Surveillance", id = "Humans",
                      might also have headache, body aches, fatigue, joint pain, or gastrointestinal symptoms. Neuroinvasive 
                      disease is more serious and includes meningitis, encephalitis, acute flaccid paralysis, or other
                      neurological symptoms.", align = "justify", style = "padding-bottom: 10px"),
-                   p("Since Week 20, two cases of West Nile virus have been reported in suburban Cook County; one case was neuroinvasive.", 
+                   p(human_text, 
                      align = "justify", style = "padding-bottom: 10px")),
            column(8,
                   sidebarLayout(
@@ -298,20 +297,87 @@ tabPanel("Human Surveillance", id = "Humans",
 
 #==========================================BIRDS (UI)=============================================================#
 
-tabPanel("Bird Surviellance", id = "Birds",
+tabPanel("Bird Surveillance", id = "Birds",
          
          fluidRow(
-           column( 4, h3(strong("Bird Surveillance"), style = "padding-bottom: 10px; padding-top: 5px"), 
-                   textOutput("bird_text")
+           column( 6, h3(strong("Bird Surveillance"), style = "padding-bottom: 10px; padding-top: 5px"),
+                   p('Birds, like humans, can be infected with West Nile virus through the bite of an infected mosquito. Some kinds of birds, in particular 
+                      crows, ravens, magpies, and jays, will get sick and die from the infection. Testing dead birds for 
+                     West Nile virus can help communities know when local West Nile virus activity is increasing.'),
+                   p('Dead birds can be reported to the Cook County Department of Public Health by completing this online ',
+                   a(href = 'http://cookcountypublichealth.org/communicable-diseases/west-nile-virus/report-dead-bird', 'form.', target="_blank"))
                    )
                    ),
          hr(),
          fluidRow(
-           column(6,
-                  plotOutput("birds")
+           column(6, style = "padding-bottom: 20px",
+                  p(bird_text),
+                  plotOutput("birds", height = "150px")
                   )
          )
-    )#pi tab closure
+    ),#bird tab closure
+
+#==========================================PREVENTION (UI)=========================================================#
+
+tabPanel("How can I prevent West Nile virus?", id="prevent",
+         fluidRow(column(6,
+                         h3(strong("West Nile Virus Prevention Measures")),
+            p("West Nile virus can be spread any time mosquitoes are active during the late spring through
+            early fall. The following steps can help protect you and
+            your family from West Nile virus infection. For more prevention tips, see the",
+              a(href = "https://www.cdc.gov/westnile/prevention/index.html", "CDC website.", target="_blank"),align = "justify", style = "font-size:16px;"))),
+         hr(),
+         fluidRow(column(6,br(),
+                h3("When outdoors between dusk and dawn, cover skin with", strong("lightly colored loose fitting 
+                   clothing"), "and use ", strong("mosquito repellent"), "with DEET, picaridin or oil of lemon eucalyptus. 
+                   When applying repellent, always follow the directions on the product label.",
+                   style = "letter-spacing: .05em")
+                ),
+                column(3, 
+                       p(img(src = "https://phil.cdc.gov//PHIL_Images/17796/17796_lores.jpg", height = "250px"))
+                )
+         
+         ),hr(),
+         fluidRow(
+           
+         column(6, br(), br(),
+                h3("Get rid of", strong("standing water"), "around your home in pet bowls, flower pots, old tires, 
+                   baby pools and toys. Water that is allowed to stagnate for three or four days 
+                   becomes a breeding ground for mosquitoes.",
+                   style = "letter-spacing: .05em")
+                ),
+         column(3, 
+                p(img(src = "https://phil.cdc.gov//PHIL_Images/21760/21760_lores.jpg", height = "250px"))
+         ),
+         column(2, 
+                p(img(src = "https://phil.cdc.gov//PHIL_Images/21762/21762_lores.jpg", height = "250px"))
+         )
+         
+         ),hr(),
+         fluidRow(column(6,br(), br(),
+                h3("Make sure your", strong("doors and windows"), "have tightly fitting screens and repair any 
+                   tears or other openings.",
+                   style = "letter-spacing: .05em")
+                ),
+                column(3, 
+                       p(img(src = "https://phil.cdc.gov//PHIL_Images/11467/11467_lores.jpg", height = "250px"))
+                )
+         
+         ),hr(), 
+         
+         fluidRow(column(6, br(), br(),br(),
+                h3("Keep", strong("weeds and grass"), "cut short and keep", strong("gutters"), "clean 
+                   and free of debris.",
+                   style = "letter-spacing: .05em")
+         ),
+         column(3, 
+                p(img(src = "https://phil.cdc.gov//PHIL_Images/09092002/00016/PHIL_2084_lores.jpg", height = "250px"))
+         )
+         
+         ),hr(),
+         
+         br(), br(), br(), br()
+         )#tab panel close
 
   )#Navbarpage closure
 
