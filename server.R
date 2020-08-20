@@ -1,4 +1,5 @@
 
+
 server <- function(input, output, session) {
 
   #==========================================MOSQUITO SURVEILLANCE (SERVER)=============================================================#          
@@ -109,9 +110,9 @@ server <- function(input, output, session) {
   
   #district map
   output$district_map <- renderLeaflet({
-    
+
     colors = color_pal[1:4]
-    
+
     leaflet(cc, options = leafletOptions(minZoom = 8.5)) %>% addProviderTiles(providers$CartoDB.Positron) %>%  setView(lng = -87.86, lat = 41.83, zoom = 9) %>%
       addPolygons(
         fillColor = as.character(colors[cc$DIST]),
@@ -129,9 +130,9 @@ server <- function(input, output, session) {
       addLegend("topright", colors = colors, labels = c("North", "West", "Southwest", "South"),
                 title = "District",
                 opacity = 1)%>%
-      addScaleBar(position = "bottomleft") 
-    
-    
+      addScaleBar(position = "bottomleft")
+
+
   })
   
   #MIR vs. human cases plot
@@ -215,18 +216,15 @@ server <- function(input, output, session) {
     #cases_plot
 
       plot_years = input$human_year
-      #plot_years = c("2012", "2018", "2019")
       plot_data = humans_long %>%
         filter(Year %in% plot_years) %>%
         mutate(Week_Start = week_starts[as.character(CollectionWeek)]) %>%
         mutate(Week_Start = factor(Week_Start, levels = week_starts)) %>%
         mutate(Year = factor(Year, levels=plot_years)) %>%
         mutate(Cases = ifelse(Year==year&CollectionWeek>week, NA, Cases)) %>%
-        #mutate(Week = MMWRweek2Date(as.numeric(as.character(Year)), CollectionWeek))
         mutate(Week = Week_Start)
         
-        #mutate(Cases = ifelse(Year==year&CollectionWeek>week, NA, Cases))
-      
+
       plot_colors = c(color_pal, greys)[1:length(plot_years)]
       
       plot_rows = ceiling(length(plot_years)/4)
@@ -240,7 +238,8 @@ server <- function(input, output, session) {
               panel.grid.minor.x = element_blank(),
               panel.background = element_rect(fill = "white", colour = "grey50"),
               panel.grid.major = element_line(colour = "grey80"),
-              plot.margin = margin(t=10,r=10,b=10,l=50)
+              plot.margin = margin(t=10,r=10,b=10,l=50),
+              panel.spacing = unit(2, "lines")
         ) +
         xlab("") +
         ylab("Human WNV Cases") 

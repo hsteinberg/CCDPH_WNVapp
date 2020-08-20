@@ -18,7 +18,7 @@ ui <- fluidPage(
   
   #Building the header 
   fluidRow(class = "header",
-           column(class = "headimg", 2, align = "center", img(class = "imggen", src="http://cookcountypublichealth.org/files/images/CCDPH_logo-full.jpg", alt="CCDPH Logo")), 
+           column(class = "headimg", 2, align = "center", img(class = "imggen", src="https://www.cookcountypublichealth.org/wp-content/uploads/2018/12/CookCountyLogo.png", alt="CCDPH Logo")), 
            column(class = "headtitle", 10, HTML('
                                                 <h1 style="font-weight: 700; font-size: 40px">Weekly West Nile Virus Surveillance Data</h1>
                                                 '))
@@ -44,9 +44,11 @@ ui <- fluidPage(
                column(7, 
                      p(id = ifelse(risk == "LOW.", "lowrisk",
                                    ifelse(risk == "INCREASING."|risk == "DECREASING.", "medrisk",
-                                          "highrisk")), 
+                                          "highrisk")),
                           "As of ",strong(paste("Week", week))," the risk of human West Nile virus in Suburban Cook
                            County is ", strong(risk)),
+                     #p(id="lowrisk", "Surveillance for the 2019 West Nile virus season has concluded. Thank you to all of our surveillance partners."),
+                     
                      h4(strong("What is West Nile virus?"), style = "padding-bottom: 3px; padding-top: 15px"),
                      p("West Nile virus (WNV) is a serious disease most commonly spread by infected mosquitoes. Mosquitoes become infected when 
                        they feed on infected birds. Infected mosquitoes can then spread the virus to humans and other animals. Symptoms are usually 
@@ -77,7 +79,7 @@ ui <- fluidPage(
                         Health would like to thank all of our surveillance partners for their help in collecting this information.", align = "justify", style = "padding-bottom: 10px"),
                      tags$small("*The Centers for Disease Control and Prevention aggregates WNV data by ", a(href = "https://wwwn.cdc.gov/nndss/document/W2018-19.pdf",
                         "MMWR Weeks. ", target="_blank"), "MMWR Weeks run from Sunday to Saturday. For simplicity, graphs in this application typically display the first day of the MMWR Week 
-                        on the x axis. Starting dates are accurate for 2019 but are approximations for all other years displayed."),
+                        on the x axis. Starting dates are accurate for 2020 but are approximations for all other years displayed."),
                      br(), br(), br()
                )
              ) #fluid Row closure
@@ -109,7 +111,7 @@ ui <- fluidPage(
         sidebarPanel(width = 3,
           checkboxGroupInput("mosq_plot_year", "Display Mosquito Data by Season for Suburban Cook County",
                              choiceValues = c(2012, (year-4):year),
-                             selected = c("2012", "2018", "2019"),
+                             selected = c("2012", "2019", "2020"),
                              choiceNames = c("2012 (Last Outbreak Year)",
                                              (year-4):year)
                              )
@@ -143,7 +145,7 @@ ui <- fluidPage(
                sidebarPanel(width = 3,
                             checkboxGroupInput("mir_years", "Display MIR Data by Season for Suburban Cook County",
                                                choiceValues = c(2012, (year-4):year),
-                                               selected = c("2012", "2018", "2019"),
+                                               selected = c("2012", "2019", "2020"),
                                                choiceNames = c("2012 (Last Outbreak Year)",
                                                                (year-4):year)
                             )
@@ -156,7 +158,8 @@ ui <- fluidPage(
              hr(),
              fluidRow(
                column(3, h4(("Suburban Cook County Districts")),
-                      leafletOutput("district_map")),
+                      leafletOutput("district_map")
+                      ),
                column(9, br(),
                       plotlyOutput("mir_district"))
                
@@ -261,7 +264,7 @@ tabPanel("Human Surveillance", id = "Humans",
            sidebarPanel(width = 2,
              checkboxGroupInput("human_year", "Display Season(s)",
                                 choiceValues = c(2012, (year-4):year),
-                                selected = c("2012", "2018", "2019"),
+                                selected = c("2012", "2019", "2020"),
                                 choiceNames = c("2012 (Last Outbreak Year)",
                                                 (year-4):year)
              )
@@ -291,7 +294,7 @@ tabPanel("Bird Surveillance", id = "Birds",
                       crows, ravens, magpies, and jays, will get sick and die from the infection. Testing dead birds for 
                      West Nile virus can help communities know when local West Nile virus activity is increasing.'),
                    p('Dead birds can be reported to the Cook County Department of Public Health by completing this online ',
-                   a(href = 'http://cookcountypublichealth.org/communicable-diseases/west-nile-virus/report-dead-bird', 'form.', target="_blank"))
+                   a(href = 'https://www.cookcountypublichealth.org/communicable-diseases/west-nile-virus/dead-bird-sighting-report/', 'form.', target="_blank"))
                    )
                    ),
          hr(),
