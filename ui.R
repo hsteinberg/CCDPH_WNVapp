@@ -111,7 +111,7 @@ ui <- fluidPage(
         sidebarPanel(width = 3,
           checkboxGroupInput("mosq_plot_year", "Display Mosquito Data by Season for Suburban Cook County",
                              choiceValues = c(2012, (year-4):year),
-                             selected = c("2012", "2019", "2020"),
+                             selected = c("2012", "2020", "2021"),
                              choiceNames = c("2012 (Last Outbreak Year)",
                                              (year-4):year)
                              )
@@ -145,7 +145,7 @@ ui <- fluidPage(
                sidebarPanel(width = 3,
                             checkboxGroupInput("mir_years", "Display MIR Data by Season for Suburban Cook County",
                                                choiceValues = c(2012, (year-4):year),
-                                               selected = c("2012", "2019", "2020"),
+                                               selected = c("2012", "2020", "2021"),
                                                choiceNames = c("2012 (Last Outbreak Year)",
                                                                (year-4):year)
                             )
@@ -264,7 +264,7 @@ tabPanel("Human Surveillance", id = "Humans",
            sidebarPanel(width = 2,
              checkboxGroupInput("human_year", "Display Season(s)",
                                 choiceValues = c(2012, (year-4):year),
-                                selected = c("2012", "2019", "2020"),
+                                selected = c("2012", "2020", "2021"),
                                 choiceNames = c("2012 (Last Outbreak Year)",
                                                 (year-4):year)
              )
